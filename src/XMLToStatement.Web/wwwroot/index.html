@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XML to Statement Converter</title>
+<style>
+  body { font-family: Segoe UI, Arial, sans-serif; background: #f4f6f8; margin: 0; color: #222; }
+  main { max-width: 640px; margin: 40px auto; background: #fff; padding: 28px 32px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+  h1 { margin-top: 0; font-size: 1.4rem; }
+  label { display: block; margin: 14px 0 4px; font-weight: 600; }
+  input[type=text], select { width: 100%; padding: 6px; box-sizing: border-box; }
+  button { margin-top: 20px; padding: 9px 22px; font-size: 1rem; background: #0b5ed7; color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
+  button:disabled { background: #8aa; cursor: wait; }
+  details { margin-top: 16px; }
+  #msg { margin-top: 18px; padding: 10px 12px; border-radius: 4px; display: none; white-space: pre-wrap; }
+  #msg.ok { display: block; background: #e6f4ea; color: #146c2e; }
+  #msg.err { display: block; background: #fdecea; color: #a12622; }
+  small { color: #666; }
+</style>
+</head>
+<body>
+<main>
+  <h1>XML to Statement Converter</h1>
+  <p>Upload an ISO 20022 camt.053 (or camt.052/054) bank statement XML and download it as an HTML statement.</p>
+  <form id="f">
+    <label for="file">Statement XML file</label>
+    <input id="file" name="file" type="file" required>
+
+    <details>
+      <summary>Options</summary>
+      <label for="title">Report title</label>
+      <input id="title" name="title" type="text" placeholder="Bank Statement">
+      <label for="accountFormat">Account number format</label>
+      <select id="accountFormat" name="accountFormat">
+        <option value="auto">Auto (from bank BIC)</option>
+        <option value="nz">NZ</option>
+        <option value="au">AU</option>
+        <option value="none">None</option>
+      </select>
+      <label for="map">Account map file (optional)</label>
+      <input id="map" name="map" type="file">
+      <small>One mapping per line: external &lt;TAB|,|;&gt; internal</small>
+      <label for="mapLabel">Mapped account column label</label>
+      <input id="mapLabel" name="mapLabel" type="text" placeholder="Mapped account number">
+    </details>
+
+    <button id="go" type="submit">Convert and download</button>
+  </form>
+  <div id="msg"></div>
+</main>
+<script>
+const form = document.getElementById('f');
+const msg = document.getElementById('msg');
+const go = document.getElementById('go');
+
+function show(text, ok) { msg.textContent = text; msg.className = ok ? 'ok' : 'err'; }
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  msg.className = '';
+  go.disabled = true;
+  try {
+    const res = await fetch('convert', { method: 'POST', body: new FormData(form) });
+    if (!res.ok) { show(await res.text(), false); return; }
+    const blob = await res.blob();
+    const name = form.file.files[0].name.replace(/\.[^.]*$/, '') + '.html';
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    show('Converted ' + name + ': ' + (res.headers.get('X-Conversion-Summary') || ''), true);
+  } catch (err) {
+    show('Request failed: ' + err.message, false);
+  } finally {
+    go.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

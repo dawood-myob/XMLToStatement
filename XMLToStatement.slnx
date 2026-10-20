@@ -5,6 +5,9 @@
   <Folder Name="/tests/">
     <Project Path="tests/XMLToStatement.Tests/XMLToStatement.Tests.csproj" />
   </Folder>
+  <Folder Name="/Web/">
+    <Project Path="src/XMLToStatement.Web/XMLToStatement.Web.csproj" />
+  </Folder>
   <Folder Name="/WinForms/">
     <Project Path="src/XMLToStatement.WinForms/XMLToStatement.WinForms.csproj" />
   </Folder>

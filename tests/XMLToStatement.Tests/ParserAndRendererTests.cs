@@ -115,10 +115,31 @@ public class ParserAndRendererTests
         Assert.Contains("GB29 NWBK 6016 1331 9268 19", html);
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("urn:example:import-log")]
+    public void Rejects_import_processing_log_with_actionable_error(string xmlNamespace)
+    {
+        var xml = $"""
+            <File xmlns="{xmlNamespace}">
+              <Props><Prop name="omitted.import.lines.count"><Value>0</Value></Prop></Props>
+              <Imports><Import><HeaderLine><Ref>Import number: 1</Ref></HeaderLine><Lines/></Import></Imports>
+            </File>
+            """;
+
+        var error = Assert.Throws<InvalidDataException>(() => Camt053Parser.ParseXml(xml));
+
+        Assert.Contains("import-processing log", error.Message);
+        Assert.Contains("Select the original ISO 20022", error.Message);
+        Assert.Contains("contains no bank statement data", error.Message);
+    }
+
     [Fact]
     public void Rejects_non_camt_xml()
     {
-        Assert.Throws<InvalidDataException>(() => Camt053Parser.ParseXml("<root><a/></root>"));
+        var error = Assert.Throws<InvalidDataException>(() => Camt053Parser.ParseXml("<root><a/></root>"));
+
+        Assert.Contains("Not an ISO 20022 cash management file", error.Message);
     }
 
     [Fact]
@@ -185,6 +206,33 @@ public class ParserAndRendererTests
         finally
         {
             File.Delete(outFile);
+        }
+    }
+
+    [Fact]
+    public void Cli_rejects_import_log_without_writing_statement()
+    {
+        var dir = Directory.CreateTempSubdirectory("xmltostatement-");
+        try
+        {
+            var input = Path.Combine(dir.FullName, "PostProcessing-pp-data.xml");
+            var output = Path.Combine(dir.FullName, "statement.html");
+            File.WriteAllText(input, "<File><Props/><Imports><Import><Lines/></Import></Imports></File>");
+            var stdout = new StringWriter();
+            var stderr = new StringWriter();
+
+            var code = Cli.Run([input, "-o", output], stdout, stderr);
+
+            Assert.Equal(Cli.ProcessingError, code);
+            Assert.False(File.Exists(output));
+            Assert.Equal("", stdout.ToString());
+            Assert.Contains($"Error processing '{input}'", stderr.ToString());
+            Assert.Contains("import-processing log", stderr.ToString());
+            Assert.Contains("Select the original ISO 20022", stderr.ToString());
+        }
+        finally
+        {
+            dir.Delete(recursive: true);
         }
     }
 

@@ -46,6 +46,42 @@ Use **Browse...** to select an input XML file and an output folder, then click *
 
 In Visual Studio, set **XMLToStatement.WinForms** as the startup project to launch the form.
 
+### Web application (Docker / Kubernetes)
+
+A lightweight ASP.NET Core minimal API (`src\XMLToStatement.Web`) with an upload page: choose the XML,
+click **Convert and download**, and the HTML statement is downloaded. Optional settings (title, account
+format, account map file) are under **Options**. Files are processed in memory only; nothing is stored
+or logged, and any file content is accepted regardless of extension (it is validated by parsing).
+
+```powershell
+dotnet run --project src\XMLToStatement.Web --urls http://localhost:8080
+```
+
+Endpoints: `GET /` (upload page), `POST /convert` (multipart field `file`, optional `map`, `title`,
+`accountFormat`, `mapLabel`; returns the HTML as an attachment, or `400` with a message), `GET /healthz`.
+The maximum upload size defaults to 50 MB and can be changed with the `MAX_UPLOAD_MB` environment variable.
+
+```powershell
+# Command-line example
+curl.exe -F "file=@samples\sample-camt053-nz.xml" -o statement.html http://localhost:8080/convert
+```
+
+Build the image (from the repo root) and deploy to Kubernetes:
+
+```powershell
+docker build -t your-registry.example.com/xml-to-statement-web:1.0.0 .
+docker push your-registry.example.com/xml-to-statement-web:1.0.0
+# edit the image name in deploy\k8s\xml-to-statement.yaml, then:
+kubectl apply -f deploy\k8s\xml-to-statement.yaml
+kubectl port-forward svc/xml-to-statement 8080:80   # quick test without an ingress
+# optional: edit the host in deploy\k8s\ingress.yaml, then:
+kubectl apply -f deploy\k8s\ingress.yaml
+```
+
+The container runs as a non-root user (UID 1654) on port 8080 with a read-only root filesystem and
+`/healthz` readiness/liveness probes. The web app has no authentication; expose it only inside your
+network or put it behind an authenticating ingress/proxy, as statements contain sensitive data.
+
 ### Command-line application
 
 ```powershell
@@ -97,6 +133,10 @@ publish\XMLToStatement.exe input.xml
 
 ## Notes
 
+- Select the original bank statement XML, not an import-processing log such as
+  `PostProcessing-pp-data.xml`. Logs with a `<File><Imports>` structure contain import status,
+  not bank statement data, and cannot be converted into a statement. The original statement
+  contains `BkToCstmrStmt`, `BkToCstmrAcctRpt` or `BkToCstmrDbtCdtNtfctn`.
 - Bank proprietary transaction codes (e.g. Westpac NZ `AP50`, `BP50`, `DC50`) are shown as supplied.
 - DTD processing is disabled when reading XML.
 - Statement files contain sensitive financial data; generated HTML should be handled accordingly.
@@ -114,6 +154,9 @@ src/XMLToStatement/
   AccountNumberFormatter.cs  NZ/AU/IBAN display formatting
   AccountMap.cs              Optional external -> internal account map
   CodeDescriptions.cs        ISO code descriptions
+src/XMLToStatement.WinForms/ Windows Forms app
+src/XMLToStatement.Web/      Web upload/download app (Dockerfile at repo root)
+deploy/k8s/                  Kubernetes Deployment, Service and Ingress manifests
 tests/XMLToStatement.Tests/  xUnit tests
 samples/                     Synthetic sample statement and map
 ```

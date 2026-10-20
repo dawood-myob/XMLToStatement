@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xml-to-statement
+  labels:
+    app: xml-to-statement
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xml-to-statement
+  template:
+    metadata:
+      labels:
+        app: xml-to-statement
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1654
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: web
+          image: your-registry.example.com/xml-to-statement-web:1.0.0 # replace with your pushed image
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: MAX_UPLOAD_MB
+              value: "50"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xml-to-statement
+  labels:
+    app: xml-to-statement
+spec:
+  type: ClusterIP
+  selector:
+    app: xml-to-statement
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

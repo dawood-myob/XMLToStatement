@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+.git/
+.vs/
+tests/
+samples/
+deploy/
+*.md
+*.user

@@ -35,6 +35,14 @@ public static class Camt053Parser
     public static StatementFile Parse(XDocument doc)
     {
         var root = doc.Root ?? throw new InvalidDataException("The XML document is empty.");
+        if (root.Name.LocalName == "File" && root.Child("Imports") is not null)
+        {
+            throw new InvalidDataException(
+                "This XML is an import-processing log (<File><Imports>), not a bank statement. " +
+                "Select the original ISO 20022 camt.053, camt.052 or camt.054 bank statement XML instead. " +
+                "The import log cannot be converted into a bank statement because it contains no bank statement data.");
+        }
+
         var message = root.Name.LocalName.StartsWith("BkToCstmr", StringComparison.Ordinal)
             ? root
             : root.Elements().FirstOrDefault(e => e.Name.LocalName.StartsWith("BkToCstmr", StringComparison.Ordinal))
