@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Synthetic sample (fictitious data) in Westpac NZ camt.053.001.02 layout. -->
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02">
+  <BkToCstmrStmt>
+    <GrpHdr>
+      <MsgId>01012026010101</MsgId>
+      <CreDtTm>2026-01-01T01:01:01</CreDtTm>
+      <AddtlInf>EODY</AddtlInf>
+    </GrpHdr>
+    <Stmt>
+      <Id>0300010012345002026-01-01T01:01:01</Id>
+      <ElctrncSeqNb>10</ElctrncSeqNb>
+      <CreDtTm>2026-01-01T01:01:01</CreDtTm>
+      <FrToDt>
+        <FrDtTm>2025-12-31T00:00:00</FrDtTm>
+        <ToDtTm>2025-12-31T23:59:59</ToDtTm>
+      </FrToDt>
+      <Acct>
+        <Id><Othr><Id>030001001234500</Id></Othr></Id>
+        <Ccy>NZD</Ccy>
+        <Nm>Example Company Limited</Nm>
+        <Svcr><FinInstnId><BIC>WPACNZ2W</BIC></FinInstnId></Svcr>
+      </Acct>
+      <Bal>
+        <Tp><CdOrPrtry><Cd>OPBD</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="NZD">1000.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt><Dt>2025-12-31</Dt></Dt>
+      </Bal>
+      <Bal>
+        <Tp><CdOrPrtry><Cd>CLBD</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="NZD">1075.50</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt><Dt>2025-12-31</Dt></Dt>
+      </Bal>
+      <Bal>
+        <Tp><CdOrPrtry><Cd>CLAV</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="NZD">1075.50</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt><Dt>2025-12-31</Dt></Dt>
+      </Bal>
+      <TxsSummry>
+        <TtlNtries>
+          <NbOfNtries>2</NbOfNtries>
+          <Sum>124.50</Sum>
+          <TtlNetNtryAmt>75.50</TtlNetNtryAmt>
+          <CdtDbtInd>CRDT</CdtDbtInd>
+        </TtlNtries>
+        <TtlCdtNtries><NbOfNtries>1</NbOfNtries><Sum>100.00</Sum></TtlCdtNtries>
+        <TtlDbtNtries><NbOfNtries>1</NbOfNtries><Sum>24.50</Sum></TtlDbtNtries>
+      </TxsSummry>
+      <Ntry>
+        <NtryRef>REF0001</NtryRef>
+        <Amt Ccy="NZD">100.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Sts>BOOK</Sts>
+        <BookgDt><Dt>2025-12-31</Dt></BookgDt>
+        <ValDt><Dt>2025-12-31</Dt></ValDt>
+        <BkTxCd>
+          <Domn><Cd>PMNT</Cd><Fmly><Cd>RCDT</Cd><SubFmlyCd>ACDT</SubFmlyCd></Fmly></Domn>
+          <Prtry><Cd>BP50</Cd><Issr>Westpac New Zealand</Issr></Prtry>
+        </BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <Refs>
+              <EndToEndId>INV-1001</EndToEndId>
+              <TxId>Smith &amp; Co</TxId>
+              <Prtry><Tp>Add.Ref</Tp><Ref>12345</Ref></Prtry>
+            </Refs>
+            <RltdPties>
+              <Dbtr><Nm>SMITH &amp; CO</Nm></Dbtr>
+              <DbtrAcct><Id><Othr><Id>120001000000100</Id></Othr></Id></DbtrAcct>
+            </RltdPties>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+      <Ntry>
+        <NtryRef>REF0002</NtryRef>
+        <Amt Ccy="NZD">24.50</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <Sts>BOOK</Sts>
+        <BookgDt><Dt>2025-12-31</Dt></BookgDt>
+        <ValDt><Dt>2025-12-31</Dt></ValDt>
+        <BkTxCd>
+          <Domn><Cd>CAMT</Cd><Fmly><Cd>ACCB</Cd><SubFmlyCd>CHRG</SubFmlyCd></Fmly></Domn>
+          <Prtry><Cd>DC50</Cd><Issr>Westpac New Zealand</Issr></Prtry>
+        </BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <Refs><AcctSvcrRef>FEE-DEC</AcctSvcrRef></Refs>
+            <RltdPties><Cdtr><Nm>WESTPAC FEES</Nm></Cdtr></RltdPties>
+            <AddtlTxInf>MONTHLY ACCOUNT FEE</AddtlTxInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+    </Stmt>
+    <Stmt>
+      <Id>0300020098765002026-01-01T01:01:01</Id>
+      <ElctrncSeqNb>11</ElctrncSeqNb>
+      <CreDtTm>2026-01-01T01:01:01</CreDtTm>
+      <FrToDt>
+        <FrDtTm>2025-12-31T00:00:00</FrDtTm>
+        <ToDtTm>2025-12-31T23:59:59</ToDtTm>
+      </FrToDt>
+      <Acct>
+        <Id><Othr><Id>030002009876500</Id></Othr></Id>
+        <Ccy>NZD</Ccy>
+        <Nm>Example Payroll Limited</Nm>
+        <Svcr><FinInstnId><BIC>WPACNZ2W</BIC></FinInstnId></Svcr>
+      </Acct>
+      <Bal>
+        <Tp><CdOrPrtry><Cd>OPBD</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="NZD">500.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt><Dt>2025-12-31</Dt></Dt>
+      </Bal>
+      <Bal>
+        <Tp><CdOrPrtry><Cd>CLBD</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="NZD">500.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt><Dt>2025-12-31</Dt></Dt>
+      </Bal>
+      <TxsSummry>
+        <TtlNtries><NbOfNtries>0</NbOfNtries><Sum>0</Sum><TtlNetNtryAmt>0</TtlNetNtryAmt><CdtDbtInd>CRDT</CdtDbtInd></TtlNtries>
+        <TtlCdtNtries><NbOfNtries>0</NbOfNtries><Sum>0</Sum></TtlCdtNtries>
+        <TtlDbtNtries><NbOfNtries>0</NbOfNtries><Sum>0</Sum></TtlDbtNtries>
+      </TxsSummry>
+    </Stmt>
+  </BkToCstmrStmt>
+</Document>

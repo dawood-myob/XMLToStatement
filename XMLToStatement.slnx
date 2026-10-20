@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/XMLToStatement/XMLToStatement.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/XMLToStatement.Tests/XMLToStatement.Tests.csproj" />
+  </Folder>
+  <Folder Name="/WinForms/">
+    <Project Path="src/XMLToStatement.WinForms/XMLToStatement.WinForms.csproj" />
+  </Folder>
+</Solution>

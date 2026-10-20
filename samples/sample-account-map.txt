@@ -1,0 +1,3 @@
+# Example account map: external (bank file) account <TAB|,|;> internal (e.g. Workday) account number
+030001001234500	001234500
+030002009876500	009876500
